@@ -22,7 +22,6 @@
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_util/lifecycle_node.hpp"
-#include "nav2_waypoint_follower/plugins/photo_at_waypoint.hpp"
 #include "nav2_waypoint_follower/plugins/wait_at_waypoint.hpp"
 #include "nav2_waypoint_follower/plugins/input_at_waypoint.hpp"
 
@@ -88,7 +87,7 @@ TEST(WaypointFollowerTest, InputAtWaypoint)
   t1.join();
 }
 
-TEST(WaypointFollowerTest, PhotoAtWaypoint)
+TEST(WaypointFollowerTest)
 {
   auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("testWaypointNode");
   auto pub = node->create_publisher<sensor_msgs::msg::Image>("/camer/color/image_raw", 1);
@@ -102,7 +101,6 @@ TEST(WaypointFollowerTest, PhotoAtWaypoint)
       rclcpp::spin_some(node->shared_from_this()->get_node_base_interface());
     };
 
-  nav2_waypoint_follower::PhotoAtWaypoint paw;
   paw.initialize(node, std::string("WAW"));
 
   // no images, throws because can't write

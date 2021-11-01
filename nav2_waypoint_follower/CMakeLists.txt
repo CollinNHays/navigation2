@@ -72,11 +72,6 @@ ament_target_dependencies(wait_at_waypoint ${dependencies})
 #prevent pluginlib from using boost
 target_compile_definitions(wait_at_waypoint PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
-add_library(photo_at_waypoint SHARED plugins/photo_at_waypoint.cpp)
-ament_target_dependencies(photo_at_waypoint ${dependencies})
-#prevent pluginlib from using boost
-target_compile_definitions(photo_at_waypoint PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
-
 add_library(input_at_waypoint SHARED plugins/input_at_waypoint.cpp)
 ament_target_dependencies(input_at_waypoint ${dependencies})
 #prevent pluginlib from using boost
