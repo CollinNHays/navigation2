@@ -87,28 +87,4 @@ TEST(WaypointFollowerTest, InputAtWaypoint)
   t1.join();
 }
 
-TEST(WaypointFollowerTest)
-{
-  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("testWaypointNode");
-  auto pub = node->create_publisher<sensor_msgs::msg::Image>("/camer/color/image_raw", 1);
-  pub->on_activate();
-  auto publish_message =
-    [&, this]() -> void
-    {
-      rclcpp::Rate(5).sleep();
-      auto msg = std::make_unique<sensor_msgs::msg::Image>();
-      pub->publish(std::move(msg));
-      rclcpp::spin_some(node->shared_from_this()->get_node_base_interface());
-    };
 
-  paw.initialize(node, std::string("WAW"));
-
-  // no images, throws because can't write
-  geometry_msgs::msg::PoseStamped pose;
-  EXPECT_FALSE(paw.processAtWaypoint(pose, 0));
-
-  // has image now, should still fail because its invalid
-  std::thread t1(publish_message);
-  EXPECT_FALSE(paw.processAtWaypoint(pose, 0));
-  t1.join();
-}
