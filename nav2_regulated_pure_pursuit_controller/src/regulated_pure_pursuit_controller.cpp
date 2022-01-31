@@ -227,7 +227,7 @@ double RegulatedPurePursuitController::getLookAheadDistance(const geometry_msgs:
   // Else, use the static look ahead distance
   double lookahead_dist = lookahead_dist_;
   if (use_velocity_scaled_lookahead_dist_) {
-    lookahead_dist = speed.linear.x * lookahead_time_;
+    lookahead_dist = fabs(speed.linear.x) * lookahead_time_;
     lookahead_dist = std::clamp(lookahead_dist, min_lookahead_dist_, max_lookahead_dist_);
   }
 
@@ -503,7 +503,10 @@ void RegulatedPurePursuitController::applyConstraints(
   linear_vel = std::max(linear_vel, regulated_linear_scaling_min_speed_);
 
   // if the actual lookahead distance is shorter than requested, that means we're at the
-  // end of the path. We'll scale linear velocity by error to slow to a smooth stop
+  // end of the path. We'll scale linear velocity by error to slow to a smooth stop.
+  // This expression is eq. to (1) holding time to goal, t, constant using the theoretical
+  // lookahead distance and proposed velocity and (2) using t with the actual lookahead
+  // distance to scale the velocity (e.g. t = lookahead / velocity, v = carrot / t).
   if (use_approach_vel_scaling_ && dist_error > 2.0 * costmap_->getResolution()) {
     double velocity_scaling = 1.0 - (dist_error / lookahead_dist);
     double unbounded_vel = approach_vel * velocity_scaling;
@@ -517,7 +520,7 @@ void RegulatedPurePursuitController::applyConstraints(
     linear_vel = std::min(linear_vel, approach_vel);
   }
 
-  // Limit linear velocities to be valid and kinematically feasible, v = v0 + a * dt
+  // Limit linear velocities to be valid
   linear_vel = std::clamp(fabs(linear_vel), 0.0, desired_linear_vel_);
   linear_vel = sign * linear_vel;
 }
@@ -656,7 +659,6 @@ bool RegulatedPurePursuitController::transformPose(
   }
   return false;
 }
-
 }  // namespace nav2_regulated_pure_pursuit_controller
 
 // Register this controller as a nav2_core plugin

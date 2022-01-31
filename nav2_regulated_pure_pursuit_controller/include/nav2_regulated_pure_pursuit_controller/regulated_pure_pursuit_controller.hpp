@@ -186,6 +186,7 @@ protected:
    * @brief Whether point is in collision
    * @param x Pose of pose x
    * @param y Pose of pose y
+   * @param theta orientation of Yaw
    * @return Whether in collision
    */
   bool inCollision(const double & x, const double & y);
